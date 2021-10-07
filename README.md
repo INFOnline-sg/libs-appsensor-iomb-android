@@ -1,5 +1,3 @@
-TEST
-
 # sample-app
 
 * A simple examples that demonstrates how to integrate IOMb library.
