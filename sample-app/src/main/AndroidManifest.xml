@@ -22,7 +22,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".web.IOLWebViewActivity" />
-        <activity android:name=".web.ManualWebViewActivity" />
     </application>
 
 </manifest>
