@@ -39,7 +39,7 @@ class App : Application() {
         }
 
         // Alternatively, the session can be initialized synchronously:
-        // IOMB_SESSION = IOMB.createBlocking(setup, config)
+        // IOMB_SESSION = IOMB.createBlocking(setup)
 
         WebView.setWebContentsDebuggingEnabled(true)
     }
