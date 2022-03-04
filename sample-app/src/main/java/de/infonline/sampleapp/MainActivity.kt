@@ -14,11 +14,11 @@ import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var logView: TextView
-    var logCounter: Int = 0
-    val textBuffer = mutableListOf<String>()
+    private lateinit var logView: TextView
+    private var logCounter: Int = 0
+    private val textBuffer = mutableListOf<String>()
 
-    val logListener = { priority: Int, tag: String, message: String?, throwable: Throwable? ->
+    private val logListener = { _: Int, tag: String, message: String?, _: Throwable? ->
         logView.post {
             if (textBuffer.size >= 100) {
                 textBuffer.removeAt(0)

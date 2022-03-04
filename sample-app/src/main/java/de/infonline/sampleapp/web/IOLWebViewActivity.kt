@@ -3,8 +3,6 @@ package de.infonline.sampleapp.web
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.Window
-import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
@@ -20,12 +18,11 @@ class IOLWebViewActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window.requestFeature(Window.FEATURE_PROGRESS)
         setContentView(R.layout.activity_hybridwebview)
 
         val urlTextField = findViewById<EditText>(R.id.webview_url_text)
         urlTextField.setText(TEST_URL)
-        urlTextField.setOnEditorActionListener { v: TextView, actionId: Int, event: KeyEvent? ->
+        urlTextField.setOnEditorActionListener { v: TextView, _: Int, _: KeyEvent? ->
             var url = v.text.toString()
             if (!url.startsWith("http")) url = "http://$url"
             iolWebView.loadUrl(url)
@@ -43,11 +40,6 @@ class IOLWebViewActivity : AppCompatActivity() {
 
                 //Nothing extraordinary to do here,
                 //IOLWebView (in layout activity_hybridwebview.xml.xml) calls the JavaScript method 'setMultiIdentifier' automatically
-            }
-        }
-        iolWebView.webChromeClient = object : WebChromeClient() {
-            override fun onProgressChanged(view: WebView, progress: Int) {
-                setProgress(progress * 100)
             }
         }
         iolWebView.loadUrl(TEST_URL)
