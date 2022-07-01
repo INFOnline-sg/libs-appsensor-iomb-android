@@ -1,19 +1,3 @@
-## 1.0.2 (2022-03-04)
-
-**Changed**
-
-- Updated all relevant dependencies
-- Default value for empty category
-- Optimised maven publishing (gradle plugin)
-- Optimised obfuscation
-- Compile/target SDK level 31
-
-**Fixed**
-
-- Category string sanitizing
-- Scope of transitive dependencies in Maven POM (avoid timber lint warnings)
-- Potential NPE in network state handling
-
 ## 1.0.1 (2021-11-19)
 
 **Changed**

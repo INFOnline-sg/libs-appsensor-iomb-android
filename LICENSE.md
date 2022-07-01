@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2022 INFOnline GmbH, Bonn / GERMANY
+Copyright (c) 2020 INFOnline GmbH, Bonn / GERMANY
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
