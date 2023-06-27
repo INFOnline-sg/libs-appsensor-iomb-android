@@ -1,3 +1,19 @@
+## 1.1.0 (2023-06-27)
+
+**Added**
+
+- New measurement system for OEWA (measurement type IOMB_AT) including hybrid measurement
+
+**Changed**
+
+- Country parameter set to "at" for IOMB_AT
+- Updated dependencies
+
+**Fixed**
+
+- Potential exception in network monitor when app is in background
+
+
 ## 1.0.3 (2022-08-18)
 
 **Changed**

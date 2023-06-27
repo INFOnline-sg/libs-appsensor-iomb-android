@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import de.infonline.lib.iomb.IOLViewEvent
 import de.infonline.sampleapp.web.IOLWebViewActivity
 import kotlin.math.max
-import kotlin.math.min
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,9 +21,7 @@ class MainActivity : AppCompatActivity() {
             if (textBuffer.size >= 100) {
                 textBuffer.removeAt(0)
             }
-            val shortTag = tag.substring(4, min(tag.length, 20))
-            val shortMessage = message?.substring(0, min(message.length, 100))
-            textBuffer.add("#${++logCounter} $shortTag: $shortMessage")
+            textBuffer.add("#${++logCounter} $tag: $message")
 
             logView.text = textBuffer.joinToString("\n")
 
@@ -48,18 +44,31 @@ class MainActivity : AppCompatActivity() {
             setHorizontallyScrolling(true)
         }
 
+
         findViewById<Button>(R.id.webview_action_hybrid).setOnClickListener {
-            startActivity(Intent(this@MainActivity, IOLWebViewActivity::class.java))
+            val intent = Intent(this@MainActivity, IOLWebViewActivity::class.java)
+            intent.putExtra("url", "https://www.infonline.de/iomb-hybrid-test.html")
+
+            startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.webview_action_oewa_hybrid).setOnClickListener {
+            val intent = Intent(this@MainActivity, IOLWebViewActivity::class.java)
+            intent.putExtra("url", "https://www.infonline.de/oewa-iomb-hybrid-test.html")
+
+            startActivity(intent)
         }
 
         findViewById<Button>(R.id.events_submit).setOnClickListener {
             App.IOMB_SESSION.logEvent(IOLViewEvent(type = IOLViewEvent.IOLViewEventType.Refreshed, category = "MainScreen"))
+            App.IOMB_AT_SESSION.logEvent(IOLViewEvent(type = IOLViewEvent.IOLViewEventType.Refreshed, category = "MainScreen"))
         }
     }
 
     override fun onResume() {
         super.onResume()
         App.IOMB_SESSION.logEvent(IOLViewEvent(type = IOLViewEvent.IOLViewEventType.Appeared, category = "MainScreen"))
+        App.IOMB_AT_SESSION.logEvent(IOLViewEvent(type = IOLViewEvent.IOLViewEventType.Appeared, category = "MainScreen"))
 
         App.logListeners.add(logListener)
     }

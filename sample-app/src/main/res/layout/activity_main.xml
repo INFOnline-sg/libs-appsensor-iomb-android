@@ -98,6 +98,21 @@
         app:layout_constraintTop_toBottomOf="@+id/webview_info"
         tools:ignore="HardcodedText" />
 
+    <Button
+        android:id="@+id/webview_action_oewa_hybrid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:text="Hybrid ÖWA WebView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/webview_action_hybrid"
+        tools:ignore="HardcodedText" />
+
     <TextView
         android:id="@+id/logging_intro"
         style="@style/TextAppearance.AppCompat.Subhead"
@@ -112,7 +127,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/webview_action_hybrid"
+        app:layout_constraintTop_toBottomOf="@+id/webview_action_oewa_hybrid"
         tools:ignore="HardcodedText" />
 
     <TextView
