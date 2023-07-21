@@ -5,7 +5,7 @@
 A simple example demonstrating how to integrate IOMb Library Android.
 
 ### Setup
-Create "credentials.gradle" file based on ".credentials.gradle" and fill your access token.
+If not present, create "credentials.gradle" file based on ".credentials.gradle". Fill your access token if you have been provided with one.
 
 ## Integration guide
 
