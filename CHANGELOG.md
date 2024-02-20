@@ -1,3 +1,16 @@
+## 1.1.1 (2024-02-20)
+
+**Added**
+
+- AGP8 / R8 Full Mode compatibility
+
+**Changed**
+
+- Optimised lifecycle events handling
+- Compile/target SDK level 33
+- Updated all relevant dependencies
+
+
 ## 1.1.0 (2023-06-27)
 
 **Added**

@@ -18,21 +18,21 @@ class App : Application() {
         IOLDebug.debugMode = true
         IOLDebug.logListener = object : LogListener {
             override fun onLog(
-                priority: Int,
-                tag: String,
-                message: String?,
-                throwable: Throwable?
+                    priority: Int,
+                    tag: String,
+                    message: String?,
+                    throwable: Throwable?
             ) {
                 val logMessage =
-                    throwable?.let { "$message\n${Log.getStackTraceString(it)}" } ?: "$message"
+                        throwable?.let { "$message\n${Log.getStackTraceString(it)}" } ?: "$message"
                 Log.println(priority, tag, logMessage)
                 logListeners.toList().forEach { it.invoke(priority, tag, message, throwable) }
             }
         }
 
         val iombSetup = IOMBSetup(
-                offerIdentifier = "iamtest",
-                baseUrl = "https://data-ef4e2c0163.infonline.de",
+            offerIdentifier = "iamtest",
+            baseUrl = "https://data-ef4e2c0163.infonline.de",
         )
 
         IOMB.create(iombSetup).subscribe { it ->
@@ -40,8 +40,8 @@ class App : Application() {
         }
 
         val iombAtSetup = IOMBATSetup(
-                offerIdentifier = "iamtest",
-                baseUrl = "https://data-ef4e2c0163.infonline.de",
+            offerIdentifier = "iamtest",
+            baseUrl = "https://data-ef4e2c0163.infonline.de",
         )
 
         IOMB.create(iombAtSetup).subscribe { it ->
