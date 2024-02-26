@@ -1,4 +1,11 @@
-## 1.1.1 (2024-02-20)
+## 1.1.2 (2024-02-26)
+
+**Fixed**
+
+- v1.1.1 issue: Interface not found (obfuscator settings)
+
+
+## 1.1.1 (2024-02-20) [YANKED]
 
 **Added**
 
