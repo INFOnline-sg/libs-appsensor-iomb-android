@@ -1,0 +1,165 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    namespace 'de.infonline.lib.iomb'
+
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 33
+
+        multiDexEnabled true
+
+        consumerProguardFiles 'proguard-rules.pro'
+
+        buildConfigField "String", "SZM_EVENT_API_URL", "\"https://de.ioam.de/tx.io\""
+        buildConfigField "String", "OEWA_EVENT_API_URL", "\"https://at.iocnt.net/tx.io\""
+
+        // If true nothing will be dispatched to the infonline server.
+        // Set to false for production releases!
+        buildConfigField "Boolean", "DRY_RUN", "false"
+
+        // If true the hardcoded default remote config is used; no new config
+        // is fetched from the server. Set to false for production releases!
+        buildConfigField "Boolean", "DEBUG_CONFIG_ENABLED", "false"
+
+        // For testing ConfigUpdates triggered by the server.
+        // Enables sending CCODE=[1/2/3] as parameter in event requests; if
+        // CCODE is present the server includes the matching C1/C2/C3 code
+        // in its response. Set to empty string or null for production releases.
+        buildConfigField "String", "DEBUG_CONFIG_EXPIRY_RESPONSE_CODE", "\"\""
+
+        // Build identification embedded in the artifact.
+        // TODO: replace with CI-injected values once a publish workflow exists (PR 2).
+        buildConfigField "String", "GIT_HASH", "\"unknown\""
+        buildConfigField "int", "GIT_COUNT", "0"
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    flavorDimensions = ["endpoint"]
+
+    productFlavors {
+        dev {
+            dimension "endpoint"
+
+            // TODO: rockabyte.com/INFOnline/getConfig.php may have moved during the migration; verify reachability before relying on the dev flavor.
+            buildConfigField "String", "SZM_CONFIG_FILE_URL", "\"https://rockabyte.com/INFOnline/getConfig.php?file=szm\""
+            buildConfigField "String", "OEWA_CONFIG_FILE_URL", "\"https://rockabyte.com/INFOnline/getConfig.php?file=oewa\""
+            buildConfigField "String", "ACSAM_CONFIG_FILE_URL", "\"https://rockabyte.com/INFOnline/getConfig.php?file=acsam\""
+
+            buildConfigField "String", "DEBUG_CONFIG_EXPIRY_RESPONSE_CODE", "\"C1\""
+        }
+
+        prod {
+            dimension "endpoint"
+
+            buildConfigField "String", "SZM_CONFIG_FILE_URL", "\"https://config.ioam.de/appcfg.php\""
+            buildConfigField "String", "OEWA_CONFIG_FILE_URL", "\"https://config-at.iocnt.net/appcfg.php\""
+            buildConfigField "String", "ACSAM_CONFIG_FILE_URL", "\"\""
+        }
+    }
+
+    buildTypes {
+        debug {
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+        unitTests.all {
+            useJUnitPlatform()
+        }
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-process:2.6.2"
+
+    implementation "com.google.android.gms:play-services-ads-identifier:18.0.1"
+
+    implementation "androidx.preference:preference-ktx:1.2.1"
+
+    // Dependency injection
+    implementation "com.google.dagger:dagger:2.48"
+    kapt "com.google.dagger:dagger-compiler:2.48"
+
+    implementation "com.jakewharton.timber:timber:5.0.1"
+
+    // Reactive
+    api "io.reactivex.rxjava3:rxjava:3.1.6"
+    implementation "io.reactivex.rxjava3:rxkotlin:3.0.1"
+    api "io.reactivex.rxjava3:rxandroid:3.0.2"
+    debugImplementation "com.uber.rxdogtag2:rxdogtag:2.0.1"
+    implementation "com.jakewharton.rx3:replaying-share-kotlin:3.0.0"
+
+    // Serialization
+    implementation "com.squareup.moshi:moshi:1.15.0"
+    implementation "com.squareup.moshi:moshi-adapters:1.15.0"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.15.0"
+    kaptTest "com.squareup.moshi:moshi-kotlin-codegen:1.15.0"
+
+    // HTTP
+    implementation "com.squareup.okio:okio:3.6.0"
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.12.0"
+
+    // Tests
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.12.0"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.1"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.1"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.1"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.10.1"
+
+    // Robolectric still requires JUnit 4 on the classpath
+    testImplementation "androidx.test.ext:junit:1.1.5"
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "org.robolectric:robolectric:4.11.1"
+
+    testImplementation "io.mockk:mockk:1.13.8"
+    testImplementation "io.kotest:kotest-runner-junit5:5.8.0"
+    testImplementation "io.kotest:kotest-assertions-core-jvm:5.8.0"
+    testImplementation "io.kotest:kotest-property-jvm:5.8.0"
+
+    testImplementation "org.awaitility:awaitility:4.2.0"
+    testImplementation "org.awaitility:awaitility-kotlin:4.2.0"
+
+    testImplementation "org.mockito:mockito-core:5.7.0"
+    testImplementation "androidx.test:core:1.5.0"
+    testImplementation "org.assertj:assertj-core:3.24.2"
+}

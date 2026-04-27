@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <provider
+            android:authorities="${applicationId}.IOLInitProvider"
+            android:exported="false"
+            android:enabled="true"
+            android:name="de.infonline.lib.iomb.core.IOLInitProvider" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+    </application>
+
+</manifest>

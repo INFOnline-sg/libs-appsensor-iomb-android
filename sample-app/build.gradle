@@ -52,26 +52,13 @@ android {
     }
 }
 
-apply from: "credentials.gradle"
-
 repositories {
-    maven {
-        url "https://repo.infonline.de/api/v4/projects/5/packages/maven"
-        name "INFOnline"
-
-        credentials(HttpHeaderCredentials) {
-            name = "Private-Token"
-            value = project.ext.mavenRepoAccessToken
-        }
-        authentication {
-            header(HttpHeaderAuthentication)
-        }
-    }
+    google()
+    mavenCentral()
 }
 
 dependencies {
-    //noinspection GradleDynamicVersion
-    implementation 'de.infonline:iomb-library:1.+'
+    implementation project(':library')
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
