@@ -1,0 +1,41 @@
+// publish-override.gradle — applied via --init-script from publish.yml.
+//
+// Adds a GitHub Packages Maven publish target to the archive's :library
+// module and optionally overrides the published version, without modifying
+// any file under the archive checkout on disk.
+//
+// Required env: PUBLISH_REPO_URL, GITHUB_ACTOR, GITHUB_TOKEN
+// Optional env: VERSION_NAME_OVERRIDE (replaces rootProject.ext.globalVersionName
+//               before the :library script reads it)
+
+def repoUrl = System.getenv('PUBLISH_REPO_URL')
+if (!repoUrl) {
+    throw new GradleException('PUBLISH_REPO_URL is required when applying publish-override.gradle')
+}
+
+def versionOverride = System.getenv('VERSION_NAME_OVERRIDE')?.trim()
+
+allprojects { project ->
+    project.afterEvaluate {
+        // Root project's afterEvaluate fires before sub-project scripts evaluate,
+        // so updating ext.globalVersionName here propagates into LIBRARY_FULL_NAME,
+        // archivesBaseName, and the publication's version field as the :library
+        // script captures them.
+        if (project == project.rootProject && versionOverride) {
+            project.ext.globalVersionName = versionOverride
+        }
+
+        if (project.path == ':library' && project.plugins.hasPlugin('maven-publish')) {
+            project.publishing.repositories {
+                maven {
+                    name = 'GitHubPackages'
+                    url = repoUrl
+                    credentials {
+                        username = System.getenv('GITHUB_ACTOR')
+                        password = System.getenv('GITHUB_TOKEN')
+                    }
+                }
+            }
+        }
+    }
+}
