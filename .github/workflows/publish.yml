@@ -33,6 +33,23 @@ jobs:
         with:
           path: distribution
 
+      - name: Diag — secret sanity
+        env:
+          TOKEN: ${{ secrets.ARCHIVE_READ_TOKEN }}
+        run: |
+          test -n "$TOKEN" || { echo "ARCHIVE_READ_TOKEN is empty/unavailable"; exit 1; }
+          echo "ARCHIVE_READ_TOKEN length=${#TOKEN}"
+
+      - name: Diag — repo auth probe
+        env:
+          TOKEN: ${{ secrets.ARCHIVE_READ_TOKEN }}
+        run: |
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/INFOnline-sg/gitlab-archive-tec-app-libraries-iomb_iomp_android)
+          echo "archive repo auth probe HTTP $code"
+
       - name: Checkout archive
         uses: actions/checkout@v4
         with:
