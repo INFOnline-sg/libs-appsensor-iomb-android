@@ -59,14 +59,25 @@ jobs:
           path: archive
           fetch-depth: 0
 
-      - name: Strip dead JCenter-only buildscript dependency
+      - name: Patch archive buildscript repos
         working-directory: archive
         run: |
-          # `com.github.jcandksolutions.gradle:android-unit-test:2.1.1` is on the
-          # buildscript classpath but never applied, and only ever existed on
-          # JCenter (offline since 2022). Drop the line so buildscript
-          # resolution succeeds on the runner.
+          # 1. `com.github.jcandksolutions.gradle:android-unit-test:2.1.1` is on
+          #    the buildscript classpath but never applied, and only ever
+          #    existed on JCenter (offline since 2022). Drop the line so
+          #    buildscript resolution succeeds.
           sed -i "/com\.github\.jcandksolutions\.gradle:android-unit-test/d" build.gradle
+
+          # 2. The buildscript classpath dep `org.ajoberstar:gradle-git-publish:3.0.0`
+          #    transitively pulls `org.ajoberstar.grgit:grgit-core:latest.release`,
+          #    which lives on Maven Central. The archive's buildscript.repositories
+          #    only declares jcenter() (dead), google() and the Gradle Plugin
+          #    Portal — none of which serves it. Inject mavenCentral() into the
+          #    buildscript block on the runner. (Init-script approaches in
+          #    publish-override.gradle don't catch root's buildscript classpath
+          #    resolution in time on Gradle 6.8.3, so we patch deterministically
+          #    here instead.)
+          sed -i '/^buildscript {/,/^}$/ s|^        jcenter()$|        jcenter()\n        mavenCentral()|' build.gradle
 
       - name: Set up JDK 8
         uses: actions/setup-java@v4
