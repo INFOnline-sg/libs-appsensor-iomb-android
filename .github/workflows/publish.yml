@@ -1,0 +1,82 @@
+name: Publish IOMb library to GitHub Packages
+
+# Manual-only release workflow. Source lives in the (frozen, read-only)
+# archive repo `INFOnline-sg/gitlab-archive-tec-app-libraries-iomb_iomp_android`;
+# this workflow checks out a fixed tag/commit, builds the AAR with the
+# original AGP 4 / JDK 8 toolchain, and publishes to this repo's GitHub
+# Packages Maven registry. No auto-trigger by design.
+
+on:
+  workflow_dispatch:
+    inputs:
+      archive_ref:
+        description: 'Tag or commit SHA in the archive repo to build.'
+        required: true
+        type: string
+        default: '211014_IOMbLib_Release_1.0.0'
+      version_name:
+        description: 'Optional override for the published Maven version. Leave empty to use the archive''s globalVersionName (1.0.0).'
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+        with:
+          path: distribution
+
+      - name: Checkout archive
+        uses: actions/checkout@v4
+        with:
+          repository: INFOnline-sg/gitlab-archive-tec-app-libraries-iomb_iomp_android
+          ref: ${{ inputs.archive_ref }}
+          token: ${{ secrets.ARCHIVE_READ_TOKEN }}
+          path: archive
+          fetch-depth: 0
+
+      - name: Strip dead JCenter-only buildscript dependency
+        working-directory: archive
+        run: |
+          # `com.github.jcandksolutions.gradle:android-unit-test:2.1.1` is on the
+          # buildscript classpath but never applied, and only ever existed on
+          # JCenter (offline since 2022). Drop the line so buildscript
+          # resolution succeeds on the runner.
+          sed -i "/com\.github\.jcandksolutions\.gradle:android-unit-test/d" build.gradle
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and publish library AAR
+        working-directory: archive
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_REPO_URL: https://maven.pkg.github.com/${{ github.repository }}
+          VERSION_NAME_OVERRIDE: ${{ inputs.version_name }}
+        run: |
+          ./gradlew \
+            --init-script ${{ github.workspace }}/distribution/.github/gradle/publish-override.gradle \
+            :library:assembleProdRelease \
+            :library:publishLibraryPublicationToGitHubPackagesRepository
+
+      - name: Upload AAR as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iomb-library-aar
+          path: archive/library/build/outputs/aar/*.aar
+          if-no-files-found: warn
