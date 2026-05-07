@@ -68,16 +68,26 @@ jobs:
           #    buildscript resolution succeeds.
           sed -i "/com\.github\.jcandksolutions\.gradle:android-unit-test/d" build.gradle
 
-          # 2. The buildscript classpath dep `org.ajoberstar:gradle-git-publish:3.0.0`
-          #    transitively pulls `org.ajoberstar.grgit:grgit-core:latest.release`,
-          #    which lives on Maven Central. The archive's buildscript.repositories
-          #    only declares jcenter() (dead), google() and the Gradle Plugin
-          #    Portal — none of which serves it. Inject mavenCentral() into the
-          #    buildscript block on the runner. (Init-script approaches in
-          #    publish-override.gradle don't catch root's buildscript classpath
-          #    resolution in time on Gradle 6.8.3, so we patch deterministically
-          #    here instead.)
+          # 2. The buildscript classpath needs Maven Central for dependencies
+          #    that aren't on jcenter (dead) / google() / the Gradle Plugin
+          #    Portal. Inject mavenCentral() into the buildscript block on the
+          #    runner. (Init-script approaches in publish-override.gradle don't
+          #    catch root's buildscript classpath resolution in time on Gradle
+          #    6.8.3, so we patch deterministically here instead.)
           sed -i '/^buildscript {/,/^}$/ s|^        jcenter()$|        jcenter()\n        mavenCentral()|' build.gradle
+
+          # 3. Remove the `org.ajoberstar.git-publish` plugin completely. Its
+          #    `org.ajoberstar.grgit:grgit-core:latest.release` transitive dep
+          #    today resolves to 5.3.3, which requires JDK 11. The archive
+          #    needs JDK 8 (AGP 4.0.2 hard requirement), so the consumer/
+          #    producer Java versions don't match and resolution fails.
+          #    The plugin is only used by the `gitPublishPush` task that
+          #    publishes to a separate Git remote — irrelevant to this AAR
+          #    publish workflow. Strip the classpath dep, the `apply plugin:`
+          #    line, and the `gitPublish { ... }` configuration block.
+          sed -i "/'org\.ajoberstar:gradle-git-publish:3\.0\.0'/d" build.gradle
+          sed -i "/^apply plugin: 'org\.ajoberstar\.git-publish'$/d" build.gradle
+          sed -i '/^gitPublish {/,/^}$/d' build.gradle
 
       - name: Set up JDK 8
         uses: actions/setup-java@v4
