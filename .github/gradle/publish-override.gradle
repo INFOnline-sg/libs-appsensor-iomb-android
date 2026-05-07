@@ -15,6 +15,19 @@ if (!repoUrl) {
 
 def versionOverride = System.getenv('VERSION_NAME_OVERRIDE')?.trim()
 
+// Inject Maven Central into every project's buildscript repositories. The
+// archive's root build.gradle only declares jcenter() (offline since 2022),
+// google(), and the Gradle Plugin Portal — none of which serves the
+// transitive `org.ajoberstar.grgit:grgit-core` dependency pulled in by the
+// archive's `org.ajoberstar:gradle-git-publish:3.0.0` classpath plugin.
+// Init scripts configure projects before their build.gradle evaluates, so
+// this propagates into the root project's buildscript classpath resolution.
+allprojects { project ->
+    project.buildscript.repositories {
+        mavenCentral()
+    }
+}
+
 allprojects { project ->
     project.afterEvaluate {
         // Root project's afterEvaluate fires before sub-project scripts evaluate,
