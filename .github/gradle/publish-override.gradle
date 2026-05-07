@@ -20,9 +20,14 @@ def versionOverride = System.getenv('VERSION_NAME_OVERRIDE')?.trim()
 // google(), and the Gradle Plugin Portal — none of which serves the
 // transitive `org.ajoberstar.grgit:grgit-core` dependency pulled in by the
 // archive's `org.ajoberstar:gradle-git-publish:3.0.0` classpath plugin.
-// Init scripts configure projects before their build.gradle evaluates, so
-// this propagates into the root project's buildscript classpath resolution.
-allprojects { project ->
+//
+// Use `gradle.beforeProject` rather than `allprojects` — the latter applies
+// during project configuration, which is *too late* for the root project's
+// own buildscript {} classpath (Gradle resolves that at the very start of
+// evaluating the root build.gradle, before configuration callbacks fire).
+// `beforeProject` is the documented init-script hook that runs before each
+// project script evaluates, including the root.
+gradle.beforeProject { project ->
     project.buildscript.repositories {
         mavenCentral()
     }
