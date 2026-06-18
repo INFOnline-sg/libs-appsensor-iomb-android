@@ -1,1 +1,2 @@
-include ':sample-app'
+// Changes to this file may also need to be applied to the build task "createGradleSettingsForSampleApp"
+include ':sample-app', ':demo-app'

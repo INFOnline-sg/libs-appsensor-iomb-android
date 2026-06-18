@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import de.infonline.lib.iomb.IOMBHybridBridge
 import de.infonline.lib.iomb.IOMbOEWAHybridBridge
 import de.infonline.sampleapp.R
@@ -23,6 +26,15 @@ class IOLWebViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_hybridwebview)
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(android.R.id.content)
+        ) { v: View?, windowInsets: WindowInsetsCompat? ->
+            val insets = windowInsets!!.getInsets(WindowInsetsCompat.Type.systemBars())
+            v!!.setPadding(insets.left, insets.top, insets.right, 0
+            )
+            windowInsets
+        }
 
         val extras = intent.extras
         var defaultUrl = ""

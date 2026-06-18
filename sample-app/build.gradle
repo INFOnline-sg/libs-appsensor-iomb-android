@@ -4,12 +4,12 @@ apply plugin: 'kotlin-android'
 android {
     namespace 'de.infonline.sampleapp'
 
-    compileSdk 33
+    compileSdkVersion 35
 
     defaultConfig {
         applicationId "de.infonline.sampleapp"
         minSdk 21
-        targetSdk 33
+        targetSdk 35
         versionCode 1
         versionName '1.1.2'
 
@@ -39,7 +39,7 @@ android {
         jvmTarget = "17"
     }
 
-    flavorDimensions = ["endpoint"]
+    flavorDimensions.add("endpoint")
 
     productFlavors {
         dev {
@@ -52,19 +52,14 @@ android {
     }
 }
 
-apply from: "credentials.gradle"
-
 repositories {
     maven {
-        url "https://repo.infonline.de/api/v4/projects/5/packages/maven"
-        name "INFOnline"
-
-        credentials(HttpHeaderCredentials) {
-            name = "Private-Token"
-            value = project.ext.mavenRepoAccessToken
-        }
-        authentication {
-            header(HttpHeaderAuthentication)
+        url = uri("https://maven.pkg.github.com/INFOnline-sg/libs-appsensor-iomb-android")
+        name = "GitHubPackages"
+        credentials {
+            // add gpr.user and gpr.token to global gradle.properties (~/.gradle/gradle.properties) or set environment variables
+            username = project.findProperty("gpr.user") as String ?: System.getenv("GITHUB_USERNAME")
+            password = project.findProperty("gpr.token") as String ?: System.getenv("GITHUB_TOKEN")
         }
     }
 }
@@ -73,14 +68,14 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation 'de.infonline:iomb-library:1.+'
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21'
+    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
-    implementation 'io.reactivex.rxjava3:rxjava:3.1.6'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.12'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
     implementation 'io.reactivex.rxjava3:rxkotlin:3.0.1'
 }

@@ -3,9 +3,13 @@ package de.infonline.sampleapp
 import android.content.Intent
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.OnApplyWindowInsetsListener
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import de.infonline.lib.iomb.IOLViewEvent
 import de.infonline.sampleapp.web.IOLWebViewActivity
 import kotlin.math.max
@@ -38,6 +42,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(android.R.id.content)
+        ) { v: View?, windowInsets: WindowInsetsCompat? ->
+            val insets = windowInsets!!.getInsets(WindowInsetsCompat.Type.systemBars())
+            v!!.setPadding(insets.left, insets.top, insets.right, 0
+            )
+            windowInsets
+        }
 
         logView = findViewById<TextView>(R.id.logging_output).apply {
             movementMethod = ScrollingMovementMethod()
