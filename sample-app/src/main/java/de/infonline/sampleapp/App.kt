@@ -32,7 +32,7 @@ class App : Application() {
 
         val iombSetup = IOMBSetup(
             offerIdentifier = "iamtest",
-            baseUrl = "https://data-ef4e2c0163.infonline.de",
+            baseUrl = "https://data-d5c733accc.infonline.de",
         )
 
         IOMB.create(iombSetup).subscribe { it ->
@@ -41,7 +41,7 @@ class App : Application() {
 
         val iombAtSetup = IOMBATSetup(
             offerIdentifier = "iamtest",
-            baseUrl = "https://data-ef4e2c0163.infonline.de",
+            baseUrl = "https://data-d5c733accc.infonline.de",
         )
 
         IOMB.create(iombAtSetup).subscribe { it ->
